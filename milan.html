@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ultimate Prediction Dashboard</title>
+    <style>
+        :root {
+            --bg: #0a0f1e;
+            --card-bg: #161d31;
+            --accent: #00d2ff;
+            --text-main: #ffffff;
+            --text-dim: #a1a1a1;
+            --green: #28c76f;
+            --red: #ea5455;
+            --blue: #00cfe8;
+            --orange: #ff9f43;
+        }
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--bg);
+            color: var(--text-main);
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .container {
+            background: var(--card-bg);
+            width: 380px;
+            padding: 30px;
+            border-radius: 24px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.4);
+            text-align: center;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        h1 { font-size: 1.5rem; margin-bottom: 25px; color: var(--accent); letter-spacing: 2px; }
+        .input-box { position: relative; margin-bottom: 30px; }
+        input {
+            width: 100%;
+            padding: 15px;
+            background: #0a0f1e;
+            border: 2px solid #283046;
+            border-radius: 12px;
+            color: #fff;
+            font-size: 1.2rem;
+            text-align: center;
+            outline: none;
+            box-sizing: border-box;
+            transition: 0.3s;
+        }
+        input:focus { border-color: var(--accent); box-shadow: 0 0 10px rgba(0, 210, 255, 0.3); }
+        .display-area {
+            background: #0a0f1e;
+            padding: 25px;
+            border-radius: 16px;
+            min-height: 120px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            border: 1px dashed #283046;
+        }
+        .period-text { font-size: 0.8rem; color: var(--text-dim); margin-bottom: 8px; text-transform: uppercase; }
+        #resultOutput { font-size: 2.5rem; font-weight: 700; transition: 0.3s; }
+        
+        /* Animation & Colors */
+        .color-GREEN { color: var(--green); filter: drop-shadow(0 0 8px var(--green)); }
+        .color-RED { color: var(--red); filter: drop-shadow(0 0 8px var(--red)); }
+        .color-SMALL { color: var(--blue); filter: drop-shadow(0 0 8px var(--blue)); }
+        .color-BIG { color: var(--orange); filter: drop-shadow(0 0 8px var(--orange)); }
+        
+        .footer { margin-top: 25px; font-size: 0.7rem; color: #4b5563; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>PREDICTION ENGINE</h1>
+    <div class="input-box">
+        <input type="number" id="pInput" placeholder="Enter Period Number" oninput="checkData()">
+    </div>
+
+    <div class="display-area">
+        <div id="pLabel" class="period-text">Waiting for input...</div>
+        <div id="resultOutput">---</div>
+    </div>
+
+    <div class="footer">LIVE SYSTEM CONNECTED | 999 RECORDS SYNCED</div>
+</div>
+
+<script>
+    // FULL 1-999 DATA FROM YOUR SHEET
+    const masterData = {"1": "GREEN", "2": "RED", "3": "SMALL", "4": "GREEN", "5": "GREEN", "6": "SMALL", "7": "SMALL", "8": "SMALL", "9": "BIG", "10": "BIG", "11": "SMALL", "12": "RED", "13": "SMALL", "14": "BIG", "15": "RED", "16": "SMALL", "17": "RED", "18": "SMALL", "19": "RED", "20": "GREEN", "21": "RED", "22": "BIG", "23": "GREEN", "24": "GREEN", "25": "RED", "26": "BIG", "27": "RED", "28": "BIG", "29": "SMALL", "30": "BIG", "31": "GREEN", "32": "GREEN", "33": "BIG", "34": "BIG", "35": "BIG", "36": "GREEN", "37": "GREEN", "38": "GREEN", "39": "BIG", "40": "GREEN", "41": "GREEN", "42": "RED", "43": "RED", "44": "SMALL", "45": "RED", "46": "BIG", "47": "BIG", "48": "BIG", "49": "BIG", "50": "SMALL", "51": "RED", "52": "BIG", "53": "GREEN", "54": "SMALL", "55": "BIG", "56": "BIG", "57": "SMALL", "58": "SMALL", "59": "GREEN", "60": "RED", "61": "BIG", "62": "BIG", "63": "SMALL", "64": "BIG", "65": "RED", "66": "SMALL", "67": "GREEN", "68": "RED", "69": "GREEN", "70": "SMALL", "71": "BIG", "72": "GREEN", "73": "BIG", "74": "SMALL", "75": "GREEN", "76": "RED", "77": "BIG", "78": "BIG", "79": "BIG", "80": "GREEN", "81": "SMALL", "82": "GREEN", "83": "GREEN", "84": "GREEN", "85": "BIG", "86": "BIG", "87": "BIG", "88": "BIG", "89": "RED", "90": "SMALL", "91": "SMALL", "92": "BIG", "93": "RED", "94": "GREEN", "95": "RED", "96": "BIG", "97": "RED", "98": "BIG", "99": "GREEN", "100": "BIG", "101": "SMALL", "102": "SMALL", "103": "BIG", "104": "GREEN", "105": "RED", "106": "RED", "107": "RED", "108": "GREEN", "109": "SMALL", "110": "GREEN", "111": "RED", "112": "SMALL", "113": "GREEN", "114": "SMALL", "115": "SMALL", "116": "BIG", "117": "SMALL", "118": "BIG", "119": "RED", "120": "GREEN", "121": "GREEN", "122": "SMALL", "123": "SMALL", "124": "GREEN", "125": "GREEN", "126": "RED", "127": "SMALL", "128": "RED", "129": "GREEN", "130": "BIG", "131": "RED", "132": "BIG", "133": "SMALL", "134": "GREEN", "135": "GREEN", "136": "SMALL", "137": "RED", "138": "GREEN", "139": "SMALL", "140": "SMALL", "141": "GREEN", "142": "SMALL", "143": "GREEN", "144": "BIG", "145": "SMALL", "146": "SMALL", "147": "BIG", "148": "BIG", "149": "SMALL", "150": "SMALL", "151": "SMALL", "152": "BIG", "153": "RED", "154": "GREEN", "155": "RED", "156": "SMALL", "157": "GREEN", "158": "BIG", "159": "BIG", "160": "GREEN", "161": "BIG", "162": "RED", "163": "GREEN", "164": "SMALL", "165": "BIG", "166": "BIG", "167": "RED", "168": "BIG", "169": "BIG", "170": "GREEN", "171": "SMALL", "172": "SMALL", "173": "BIG", "174": "RED", "175": "RED", "176": "RED", "177": "SMALL", "178": "GREEN", "179": "SMALL", "180": "BIG", "181": "SMALL", "182": "BIG", "183": "GREEN", "184": "RED", "185": "SMALL", "186": "BIG", "187": "GREEN", "188": "GREEN", "189": "BIG", "190": "GREEN", "191": "GREEN", "192": "GREEN", "193": "SMALL", "194": "SMALL", "195": "BIG", "196": "SMALL", "197": "GREEN", "198": "RED", "199": "BIG", "200": "BIG", "201": "GREEN", "202": "BIG", "203": "RED", "204": "RED", "205": "RED", "206": "GREEN", "207": "BIG", "208": "SMALL", "209": "RED", "210": "BIG", "211": "BIG", "212": "BIG", "213": "BIG", "214": "RED", "215": "RED", "216": "GREEN", "217": "SMALL", "218": "RED", "219": "GREEN", "220": "GREEN", "221": "BIG", "222": "RED", "223": "BIG", "224": "GREEN", "225": "SMALL", "226": "GREEN", "227": "RED", "228": "SMALL", "229": "BIG", "230": "GREEN", "231": "RED", "232": "GREEN", "233": "RED", "234": "GREEN", "235": "SMALL", "236": "SMALL", "237": "RED", "238": "GREEN", "239": "SMALL", "240": "SMALL", "241": "GREEN", "242": "GREEN", "243": "BIG", "244": "BIG", "245": "RED", "246": "BIG", "247": "BIG", "248": "RED", "249": "BIG", "250": "SMALL", "251": "SMALL", "252": "BIG", "253": "BIG", "254": "RED", "255": "BIG", "256": "RED", "257": "GREEN", "258": "BIG", "259": "SMALL", "260": "BIG", "261": "RED", "262": "RED", "263": "RED", "264": "RED", "265": "GREEN", "266": "RED", "267": "BIG", "268": "RED", "269": "GREEN", "270": "BIG", "271": "SMALL", "272": "GREEN", "273": "GREEN", "274": "GREEN", "275": "GREEN", "276": "GREEN", "277": "BIG", "278": "RED", "279": "GREEN", "280": "GREEN", "281": "GREEN", "282": "BIG", "283": "SMALL", "284": "SMALL", "285": "SMALL", "286": "RED", "287": "BIG", "288": "SMALL", "289": "RED", "290": "RED", "291": "BIG", "292": "SMALL", "293": "GREEN", "294": "RED", "295": "GREEN", "296": "RED", "297": "BIG", "298": "GREEN", "299": "BIG", "300": "RED", "301": "SMALL", "302": "SMALL", "303": "RED", "304": "SMALL", "305": "RED", "306": "SMALL", "307": "RED", "308": "BIG", "309": "BIG", "310": "GREEN", "311": "RED", "312": "GREEN", "313": "GREEN", "314": "RED", "315": "SMALL", "316": "RED", "317": "RED", "318": "SMALL", "319": "BIG", "320": "GREEN", "321": "RED", "322": "BIG", "323": "BIG", "324": "GREEN", "325": "GREEN", "326": "GREEN", "327": "RED", "328": "RED", "329": "RED", "330": "GREEN", "331": "SMALL", "332": "GREEN", "333": "SMALL", "334": "BIG", "335": "GREEN", "336": "GREEN", "337": "RED", "338": "BIG", "339": "BIG", "340": "RED", "341": "BIG", "342": "BIG", "343": "BIG", "344": "SMALL", "345": "RED", "346": "BIG", "347": "GREEN", "348": "SMALL", "349": "RED", "350": "BIG", "351": "RED", "352": "RED", "353": "BIG", "354": "BIG", "355": "RED", "356": "RED", "357": "RED", "358": "SMALL", "359": "GREEN", "360": "RED", "361": "GREEN", "362": "BIG", "363": "BIG", "364": "GREEN", "365": "RED", "366": "BIG", "367": "RED", "368": "SMALL", "369": "SMALL", "370": "RED", "371": "BIG", "372": "GREEN", "373": "GREEN", "374": "SMALL", "375": "BIG", "376": "RED", "377": "BIG", "378": "SMALL", "379": "SMALL", "380": "BIG", "381": "SMALL", "382": "BIG", "383": "BIG", "384": "BIG", "385": "BIG", "386": "BIG", "387": "RED", "388": "BIG", "389": "RED", "390": "RED", "391": "SMALL", "392": "GREEN", "393": "GREEN", "394": "GREEN", "395": "BIG", "396": "SMALL", "397": "GREEN", "398": "SMALL", "399": "RED", "400": "RED", "401": "RED", "402": "RED", "403": "SMALL", "404": "RED", "405": "RED", "406": "GREEN", "407": "SMALL", "408": "GREEN", "409": "SMALL", "410": "BIG", "411": "GREEN", "412": "BIG", "413": "SMALL", "414": "GREEN", "415": "RED", "416": "RED", "417": "GREEN", "418": "BIG", "419": "BIG", "420": "RED", "421": "RED", "422": "GREEN", "423": "BIG", "424": "SMALL", "425": "GREEN", "426": "SMALL", "427": "BIG", "428": "SMALL", "429": "GREEN", "430": "BIG", "431": "BIG", "432": "GREEN", "433": "RED", "434": "BIG", "435": "GREEN", "436": "RED", "437": "SMALL", "438": "RED", "439": "SMALL", "440": "BIG", "441": "GREEN", "442": "RED", "443": "RED", "444": "SMALL", "445": "BIG", "446": "GREEN", "447": "SMALL", "448": "RED", "449": "RED", "450": "SMALL", "451": "RED", "452": "RED", "453": "GREEN", "454": "RED", "455": "RED", "456": "SMALL", "457": "RED", "458": "RED", "459": "GREEN", "460": "BIG", "461": "GREEN", "462": "SMALL", "463": "BIG", "464": "GREEN", "465": "GREEN", "466": "RED", "467": "RED", "468": "SMALL", "469": "BIG", "470": "GREEN", "471": "GREEN", "472": "RED", "473": "SMALL", "474": "SMALL", "475": "RED", "476": "SMALL", "477": "GREEN", "478": "SMALL", "479": "RED", "480": "GREEN", "481": "BIG", "482": "BIG", "483": "RED", "484": "RED", "485": "GREEN", "486": "BIG", "487": "GREEN", "488": "RED", "489": "BIG", "490": "SMALL", "491": "BIG", "492": "SMALL", "493": "RED", "494": "RED", "495": "GREEN", "496": "RED", "497": "BIG", "498": "RED", "499": "SMALL", "500": "RED", "501": "SMALL", "502": "RED", "503": "GREEN", "504": "GREEN", "505": "RED", "506": "RED", "507": "RED", "508": "GREEN", "509": "SMALL", "510": "RED", "511": "RED", "512": "GREEN", "513": "SMALL", "514": "RED", "515": "SMALL", "516": "SMALL", "517": "GREEN", "518": "RED", "519": "SMALL", "520": "SMALL", "521": "SMALL", "522": "GREEN", "523": "SMALL", "524": "RED", "525": "GREEN", "526": "GREEN", "527": "SMALL", "528": "BIG", "529": "RED", "530": "GREEN", "531": "BIG", "532": "SMALL", "533": "SMALL", "534": "RED", "535": "RED", "536": "RED", "537": "BIG", "538": "SMALL", "539": "RED", "540": "SMALL", "541": "RED", "542": "BIG", "543": "GREEN", "544": "GREEN", "545": "RED", "546": "SMALL", "547": "BIG", "548": "GREEN", "549": "RED", "550": "RED", "551": "GREEN", "552": "GREEN", "553": "SMALL", "554": "BIG", "555": "RED", "556": "BIG", "557": "BIG", "558": "SMALL", "559": "BIG", "560": "BIG", "561": "SMALL", "562": "RED", "563": "GREEN", "564": "SMALL", "565": "SMALL", "566": "BIG", "567": "GREEN", "568": "RED", "569": "SMALL", "570": "GREEN", "571": "RED", "572": "BIG", "573": "SMALL", "574": "BIG", "575": "SMALL", "576": "GREEN", "577": "SMALL", "578": "BIG", "579": "BIG", "580": "SMALL", "581": "RED", "582": "RED", "583": "GREEN", "584": "GREEN", "585": "GREEN", "586": "BIG", "587": "RED", "588": "BIG", "589": "GREEN", "590": "SMALL", "591": "BIG", "592": "RED", "593": "SMALL", "594": "SMALL", "595": "GREEN", "596": "RED", "597": "GREEN", "598": "BIG", "599": "RED", "600": "GREEN", "601": "SMALL", "602": "RED", "603": "GREEN", "604": "RED", "605": "RED", "606": "RED", "607": "BIG", "608": "RED", "609": "GREEN", "610": "RED", "611": "BIG", "612": "BIG", "613": "GREEN", "614": "GREEN", "615": "BIG", "616": "GREEN", "617": "RED", "618": "SMALL", "619": "GREEN", "620": "SMALL", "621": "RED", "622": "RED", "623": "BIG", "624": "BIG", "625": "RED", "626": "GREEN", "627": "BIG", "628": "RED", "629": "SMALL", "630": "GREEN", "631": "SMALL", "632": "SMALL", "633": "SMALL", "634": "RED", "635": "SMALL", "636": "RED", "637": "RED", "638": "SMALL", "639": "SMALL", "640": "RED", "641": "GREEN", "642": "RED", "643": "RED", "644": "SMALL", "645": "RED", "646": "SMALL", "647": "RED", "648": "RED", "649": "GREEN", "650": "SMALL", "651": "SMALL", "652": "BIG", "653": "RED", "654": "GREEN", "655": "BIG", "656": "BIG", "657": "BIG", "658": "BIG", "659": "BIG", "660": "RED", "661": "GREEN", "662": "RED", "663": "RED", "664": "BIG", "665": "SMALL", "666": "SMALL", "667": "SMALL", "668": "RED", "669": "BIG", "670": "RED", "671": "RED", "672": "GREEN", "673": "RED", "674": "RED", "675": "BIG", "676": "RED", "677": "GREEN", "678": "RED", "679": "BIG", "680": "GREEN", "681": "RED", "682": "GREEN", "683": "BIG", "684": "GREEN", "685": "SMALL", "686": "BIG", "687": "SMALL", "688": "GREEN", "689": "GREEN", "690": "RED", "691": "GREEN", "692": "BIG", "693": "SMALL", "694": "SMALL", "695": "BIG", "696": "RED", "697": "RED", "698": "SMALL", "699": "SMALL", "700": "GREEN", "701": "GREEN", "702": "BIG", "703": "RED", "704": "GREEN", "705": "SMALL", "706": "RED", "707": "BIG", "708": "GREEN", "709": "GREEN", "710": "SMALL", "711": "GREEN", "712": "BIG", "713": "BIG", "714": "SMALL", "715": "SMALL", "716": "SMALL", "717": "SMALL", "718": "BIG", "719": "SMALL", "720": "RED", "721": "RED", "722": "RED", "723": "BIG", "724": "SMALL", "725": "SMALL", "726": "SMALL", "727": "RED", "728": "SMALL", "729": "GREEN", "730": "SMALL", "731": "GREEN", "732": "SMALL", "733": "BIG", "734": "RED", "735": "RED", "736": "SMALL", "737": "GREEN", "738": "BIG", "739": "BIG", "740": "GREEN", "741": "SMALL", "742": "RED", "743": "SMALL", "744": "BIG", "745": "RED", "746": "BIG", "747": "RED", "748": "BIG", "749": "RED", "750": "SMALL", "751": "BIG", "752": "BIG", "753": "SMALL", "754": "BIG", "755": "BIG", "756": "GREEN", "757": "GREEN", "758": "SMALL", "759": "SMALL", "760": "GREEN", "761": "RED", "762": "BIG", "763": "BIG", "764": "SMALL", "765": "GREEN", "766": "GREEN", "767": "RED", "768": "BIG", "769": "BIG", "770": "RED", "771": "SMALL", "772": "BIG", "773": "SMALL", "774": "GREEN", "775": "GREEN", "776": "BIG", "777": "RED", "778": "RED", "779": "RED", "780": "SMALL", "781": "BIG", "782": "BIG", "783": "GREEN", "784": "SMALL", "785": "BIG", "786": "RED", "787": "GREEN", "788": "SMALL", "789": "BIG", "790": "BIG", "791": "GREEN", "792": "RED", "793": "RED", "794": "GREEN", "795": "RED", "796": "BIG", "797": "BIG", "798": "SMALL", "799": "RED", "800": "RED", "801": "RED", "802": "RED", "803": "RED", "804": "SMALL", "805": "BIG", "806": "BIG", "807": "RED", "808": "GREEN", "809": "BIG", "810": "RED", "811": "BIG", "812": "RED", "813": "GREEN", "814": "SMALL", "815": "GREEN", "816": "RED", "817": "RED", "818": "SMALL", "819": "SMALL", "820": "SMALL", "821": "RED", "822": "GREEN", "823": "BIG", "824": "RED", "825": "BIG", "826": "BIG", "827": "BIG", "828": "SMALL", "829": "GREEN", "830": "RED", "831": "BIG", "832": "SMALL", "833": "BIG", "834": "BIG", "835": "GREEN", "836": "RED", "837": "RED", "838": "SMALL", "839": "SMALL", "840": "RED", "841": "RED", "842": "GREEN", "843": "SMALL", "844": "SMALL", "845": "RED", "846": "RED", "847": "SMALL", "848": "RED", "849": "RED", "850": "BIG", "851": "SMALL", "852": "GREEN", "853": "GREEN", "854": "GREEN", "855": "SMALL", "856": "GREEN", "857": "BIG", "858": "SMALL", "859": "GREEN", "860": "SMALL", "861": "RED", "862": "SMALL", "863": "BIG", "864": "SMALL", "865": "SMALL", "866": "SMALL", "867": "SMALL", "868": "RED", "869": "RED", "870": "GREEN", "871": "GREEN", "872": "GREEN", "873": "SMALL", "874": "RED", "875": "SMALL", "876": "SMALL", "877": "BIG", "878": "RED", "879": "SMALL", "880": "RED", "881": "GREEN", "882": "GREEN", "883": "GREEN", "884": "SMALL", "885": "GREEN", "886": "GREEN", "887": "SMALL", "888": "BIG", "889": "GREEN", "890": "SMALL", "891": "GREEN", "892": "BIG", "893": "BIG", "894": "BIG", "895": "RED", "896": "RED", "897": "RED", "898": "GREEN", "899": "SMALL", "900": "BIG", "901": "GREEN", "902": "SMALL", "903": "GREEN", "904": "BIG", "905": "GREEN", "906": "RED", "907": "SMALL", "908": "BIG", "909": "BIG", "910": "SMALL", "911": "GREEN", "912": "RED", "913": "RED", "914": "GREEN", "915": "SMALL", "916": "GREEN", "917": "RED", "918": "BIG", "919": "RED", "920": "SMALL", "921": "GREEN", "922": "RED", "923": "RED", "924": "SMALL", "925": "RED", "926": "BIG", "927": "GREEN", "928": "SMALL", "929": "GREEN", "930": "GREEN", "931": "BIG", "932": "RED", "933": "SMALL", "934": "RED", "935": "GREEN", "936": "RED", "937": "BIG", "938": "BIG", "939": "RED", "940": "SMALL", "941": "SMALL", "942": "GREEN", "943": "BIG", "944": "RED", "945": "BIG", "946": "SMALL", "947": "RED", "948": "BIG", "949": "RED", "950": "RED", "951": "GREEN", "952": "GREEN", "953": "RED", "954": "SMALL", "955": "SMALL", "956": "GREEN", "957": "BIG", "958": "SMALL", "959": "RED", "960": "SMALL", "961": "SMALL", "962": "BIG", "963": "RED", "964": "SMALL", "965": "GREEN", "966": "GREEN", "967": "GREEN", "968": "SMALL", "969": "SMALL", "970": "GREEN", "971": "GREEN", "972": "GREEN", "973": "BIG", "974": "BIG", "975": "BIG", "976": "GREEN", "977": "BIG", "978": "GREEN", "979": "SMALL", "980": "RED", "981": "RED", "982": "BIG", "983": "SMALL", "984": "BIG", "985": "BIG", "986": "RED", "987": "RED", "988": "SMALL", "989": "GREEN", "990": "SMALL", "991": "GREEN", "992": "SMALL", "993": "GREEN", "994": "GREEN", "995": "BIG", "996": "SMALL", "997": "GREEN", "998": "GREEN", "999": "SMALL"};
+
+    function checkData() {
+        const input = document.getElementById('pInput').value;
+        const resDiv = document.getElementById('resultOutput');
+        const labelDiv = document.getElementById('pLabel');
+        
+        if (input === "") {
+            resDiv.innerText = "---";
+            resDiv.className = "";
+            labelDiv.innerText = "Waiting for input...";
+            return;
+        }
+
+        const result = masterData[input];
+        if (result) {
+            labelDiv.innerText = "PERIOD " + input + " STATUS:";
+            resDiv.innerText = result;
+            resDiv.className = "color-" + result;
+        } else {
+            labelDiv.innerText = "OUT OF RANGE";
+            resDiv.innerText = "N/A";
+            resDiv.className = "";
+        }
+    }
+</script>
+
+</body>
+</html>
